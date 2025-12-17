@@ -9,8 +9,8 @@ module.exports = {
     clean: true,
   },
 
-  mode: "development",
-  devtool: "source-map",
+  mode: "production",
+  // devtool: "source-map",
 
   module: {
     rules: [

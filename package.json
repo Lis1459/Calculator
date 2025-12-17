@@ -10,9 +10,11 @@
   "author": "Evgeniy Lupach",
   "type": "commonjs",
   "main": "src/index.js",
+  "homepage": "https://Lis1459.github.io/Calculator",
   "scripts": {
     "build": "webpack --mode production",
     "start": "webpack --mode development --watch",
+    "deploy": "gh-pages -d dist",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -26,6 +28,7 @@
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "gh-pages": "^6.3.0",
     "globals": "^16.5.0",
     "html-webpack-plugin": "^5.6.5",
     "prettier": "^3.7.4",

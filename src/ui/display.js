@@ -5,7 +5,16 @@ export function updateDisplay(value) {
 
 export const updateEnteredExpression = (calc) => {
   const expression = document.querySelector(".calc-expression");
-  expression.value = calc.operator
-    ? calc.firstNumber + calc.operator
-    : calc.displayValue;
+
+  if (calc.justCalculated) {
+    expression.value = `${calc.firstNumber} ${calc.lastOperator} ${calc.lastOperatorValue} =`;
+    return;
+  }
+
+  if (calc.operator && calc.firstNumber !== null) {
+    expression.value = `${calc.firstNumber} ${calc.operator}`;
+    return;
+  }
+
+  expression.value = "0";
 };
