@@ -8,7 +8,7 @@ This app provides a calculator, which can execute simple operations, such as: ad
 
 Instructions:
 
-1. Copy project by using `https://github.com/Lis1459/Calculator.git` or by downloading zip.
+1. Copy project by using `git clone https://github.com/Lis1459/Calculator.git` or by downloading zip.
 2. Then open its folder in console `cd destination_folder`.
 3. Run the command `npm run build`.
 4. After that the folder **dist** will appear.
