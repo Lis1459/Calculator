@@ -35,7 +35,6 @@ export function ButtonClickHandler(value) {
         insertOperator(value);
     }
   }
-  console.log(calculator);
   updateDisplay(calculator.displayValue);
   // updateEnteredExpression(calculator);
   if (value !== "=") {
@@ -44,6 +43,9 @@ export function ButtonClickHandler(value) {
 }
 
 const calculateResult = (final = true) => {
+  if (calculator.displayValue === "Error") {
+    return;
+  }
   if (calculator.operator && toString(calculator.firstNumber)) {
     const a = calculator.firstNumber;
     const b = parseFloat(calculator.displayValue);
@@ -55,15 +57,12 @@ const calculateResult = (final = true) => {
     calculator.lastOperatorValue = b;
     calculator.displayValue = result === null ? "Error" : String(result);
 
-    console.log("Result:", result);
     if (final) {
       calculator.operator = null;
       calculator.justCalculated = true;
       updateEnteredExpression(calculator);
       calculator.firstNumber = null;
-      console.log("Final calculation done.", a, oper, b);
     } else {
-      console.log("operand calculate", a, oper, b);
       calculator.firstNumber = result;
     }
     calculator.isWaitingForSecondNumber = true;
@@ -79,7 +78,6 @@ const calculateResult = (final = true) => {
     const b = calculator.lastOperatorValue;
     const oper = calculator.lastOperator;
 
-    console.log("Repeating with:", a, oper, b);
     const repeatResult = performCalculation(oper, a, b);
     calculator.firstNumber = calculator.displayValue;
     calculator.displayValue =
@@ -92,6 +90,9 @@ const calculateResult = (final = true) => {
 };
 
 const calculatePersent = () => {
+  if (calculator.displayValue === "Error") {
+    return;
+  }
   const current = parseFloat(calculator.displayValue);
 
   if (calculator.firstNumber !== null && calculator.operator) {
@@ -113,6 +114,9 @@ const calculatePersent = () => {
 };
 
 const insertOperator = (newOperator) => {
+  if (calculator.displayValue === "Error") {
+    return;
+  }
   if (calculator.justCalculated) {
     calculator.firstNumber = parseFloat(calculator.displayValue);
     calculator.isWaitingForSecondNumber = true;
@@ -130,8 +134,7 @@ const insertOperator = (newOperator) => {
 };
 
 const insertNumber = (number) => {
-  if (calculator.justCalculated) {
-    console.log("Inserting number after operator:", number);
+  if (calculator.justCalculated || calculator.displayValue === "Error") {
     calculator.displayValue = number;
     calculator.justCalculated = false;
     calculator.lastOperator = null;
@@ -152,7 +155,6 @@ const insertNumber = (number) => {
 
   calculator.displayValue =
     calculator.displayValue === "0" ? number : calculator.displayValue + number;
-  console.log(calculator.displayValue);
 };
 
 const clearDisplay = () => {
@@ -166,10 +168,16 @@ const clearDisplay = () => {
 };
 
 const toggleChangeSign = () => {
+  if (calculator.displayValue === "Error") {
+    return;
+  }
   calculator.displayValue = String(-parseFloat(calculator.displayValue));
 };
 
 const addDot = () => {
+  if (calculator.displayValue === "Error") {
+    return;
+  }
   if (calculator.isWaitingForSecondNumber) {
     calculator.displayValue = "0.";
     calculator.isWaitingForSecondNumber = false;
