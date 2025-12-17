@@ -23,6 +23,10 @@ In a source (src) folder there are some folders, that are responsible for their 
 - **ui** - contains _display.js_, that exports functions for calculator display update.
 - **styles** - contains _main.css_, that provides styles for an app.
 
+## Demo
+
+Live demo: https://lis1459.github.io/Calculator/
+
 ## Authors
 
 This project was created by Evgeniy Lupach.
