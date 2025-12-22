@@ -1,4 +1,8 @@
-import { updateDisplay, updateEnteredExpression } from "../ui/display.js";
+import {
+  updateDisplay,
+  updateEnteredExpression,
+  formatNumber,
+} from "../ui/display.js";
 import { performCalculation } from "../logic/calculate.js";
 
 const calculator = {
@@ -6,6 +10,7 @@ const calculator = {
   firstNumber: null,
   isWaitingForSecondNumber: false,
   justCalculated: false,
+  justCalculatedPercent: false,
   operator: null,
   lastOperator: null,
   lastOperatorValue: null,
@@ -37,25 +42,30 @@ export function ButtonClickHandler(value) {
   }
   updateDisplay(calculator.displayValue);
   // updateEnteredExpression(calculator);
-  if (value !== "=") {
+  if (value !== "=" && value !== "+/-") {
     updateEnteredExpression(calculator);
   }
 }
+
+const createCalculteExpration = (a, b, operation) => {
+  const result = performCalculation(operation, a, b);
+  return result === null ? "Error" : String(formatNumber(result));
+};
 
 const calculateResult = (final = true) => {
   if (calculator.displayValue === "Error") {
     return;
   }
   if (calculator.operator && toString(calculator.firstNumber)) {
-    const a = calculator.firstNumber;
-    const b = parseFloat(calculator.displayValue);
-    const oper = calculator.operator;
+    const result = createCalculteExpration(
+      calculator.firstNumber,
+      parseFloat(calculator.displayValue),
+      calculator.operator
+    );
 
-    const result = performCalculation(oper, a, b);
-
-    calculator.lastOperator = oper;
-    calculator.lastOperatorValue = b;
-    calculator.displayValue = result === null ? "Error" : String(result);
+    calculator.lastOperator = calculator.operator;
+    calculator.lastOperatorValue = parseFloat(calculator.displayValue);
+    calculator.displayValue = result;
 
     if (final) {
       calculator.operator = null;
@@ -63,7 +73,7 @@ const calculateResult = (final = true) => {
       updateEnteredExpression(calculator);
       calculator.firstNumber = null;
     } else {
-      calculator.firstNumber = result;
+      calculator.firstNumber = parseFloat(result);
     }
     calculator.isWaitingForSecondNumber = true;
     return;
@@ -74,14 +84,14 @@ const calculateResult = (final = true) => {
     calculator.lastOperatorValue !== null &&
     final
   ) {
-    const a = parseFloat(calculator.displayValue);
-    const b = calculator.lastOperatorValue;
-    const oper = calculator.lastOperator;
+    const repeatResult = createCalculteExpration(
+      parseFloat(calculator.displayValue),
+      calculator.lastOperatorValue,
+      calculator.lastOperator
+    );
 
-    const repeatResult = performCalculation(oper, a, b);
-    calculator.firstNumber = calculator.displayValue;
-    calculator.displayValue =
-      repeatResult === null ? "Error" : String(repeatResult);
+    calculator.firstNumber = parseFloat(calculator.displayValue);
+    calculator.displayValue = repeatResult;
     updateEnteredExpression(calculator);
     calculator.justCalculated = true;
     calculator.firstNumber = null;
@@ -104,11 +114,12 @@ const calculatePersent = () => {
       percentValue = current / 100;
     }
 
-    calculator.displayValue = String(percentValue);
-    calculator.lastOperatorValue = percentValue;
-    calculator.isWaitingForSecondNumber = true;
+    calculator.displayValue = String(formatNumber(percentValue));
+    calculator.lastOperatorValue = formatNumber(percentValue);
+    calculator.justCalculatedPercent = true;
+    calculator.isWaitingForSecondNumber = false;
   } else {
-    calculator.displayValue = String(current / 100);
+    calculator.displayValue = String(formatNumber(current / 100));
     calculator.isWaitingForSecondNumber = true;
   }
 };
@@ -122,6 +133,7 @@ const insertOperator = (newOperator) => {
     calculator.isWaitingForSecondNumber = true;
     calculator.justCalculated = false;
   } else if (calculator.operator && !calculator.isWaitingForSecondNumber) {
+    calculator.justCalculatedPercent = false;
     calculateResult(false);
   } else {
     calculator.firstNumber = parseFloat(calculator.displayValue);
@@ -139,6 +151,13 @@ const insertNumber = (number) => {
     calculator.justCalculated = false;
     calculator.lastOperator = null;
     calculator.lastOperatorValue = null;
+    calculator.isWaitingForSecondNumber = false;
+    return;
+  }
+
+  if (calculator.justCalculatedPercent) {
+    calculator.displayValue = number;
+    calculator.justCalculatedPercent = false;
     calculator.isWaitingForSecondNumber = false;
     return;
   }
@@ -162,6 +181,7 @@ const clearDisplay = () => {
   calculator.firstNumber = null;
   calculator.isWaitingForSecondNumber = false;
   calculator.justCalculated = false;
+  calculator.justCalculatedPercent = false;
   calculator.operator = null;
   calculator.lastOperator = null;
   calculator.lastOperatorValue = null;
